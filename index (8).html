@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Olimpiada.Science.uz — Biologiya va Tabiiy fanlar testlari</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #EEF2F8;
+    --bg-card: #FFFFFF;
+    --ink: #16223B;
+    --ink-soft: #57698A;
+    --pine: #1E3A66;
+    --leaf: #2E7D6B;
+    --ochre: #B8860B;
+    --rust: #B0413E;
+    --line: #D6DEEA;
+    --radius: 4px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Public Sans', sans-serif;
+    min-height:100vh;
+    background-image: radial-gradient(circle at 1px 1px, rgba(30,58,102,0.07) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+  header{
+    padding:22px 6vw 18px;
+    border-bottom:2px solid var(--pine);
+    display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:12px;
+  }
+  .brand{display:flex; align-items:baseline; gap:12px;}
+  .brand-mark{font-family:'Lora', serif; font-weight:700; font-size:1.5rem; letter-spacing:-0.01em; color:var(--pine);}
+  .brand-tag{font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-soft); border-left:2px solid var(--ochre); padding-left:10px;}
+  .brand-credit{font-size:0.74rem; color:var(--ink-soft); margin-top:2px;}
+  .brand-credit strong{color:var(--pine);}
+  .header-right{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+  .student-chip{font-size:0.8rem; color:var(--ink-soft); display:flex; align-items:center; gap:8px;}
+  .student-chip strong{color:var(--pine);}
+  .student-chip button{background:none; border:none; color:var(--ochre); font-size:0.74rem; cursor:pointer; text-decoration:underline;}
+  .progress-summary{font-size:0.85rem; color:var(--ink-soft); text-align:right;}
+  .progress-summary strong{color:var(--pine); font-family:'Lora',serif; font-size:1.1rem;}
+  .admin-toggle{font-size:0.78rem; color:var(--ink-soft); background:none; border:1.5px solid var(--line); padding:7px 14px; border-radius:20px; cursor:pointer; font-family:'Public Sans', sans-serif; font-weight:600;}
+  .admin-toggle:hover{border-color:var(--ochre); color:var(--pine);}
+  .admin-toggle.logged-in{background:var(--pine); color:#fff; border-color:var(--pine);}
+
+  main{padding:36px 6vw 80px; max-width:1200px; margin:0 auto;}
+  .section-eyebrow{font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ochre); font-weight:700; margin-bottom:6px;}
+  h1.page-title{font-family:'Lora', serif; font-weight:600; font-size:2rem; color:var(--pine); margin-bottom:28px; max-width:680px; line-height:1.18;}
+
+  .subject-tabs{display:flex; gap:8px; margin-bottom:26px; border-bottom:2px solid var(--line);}
+  .subject-tab{background:none; border:none; padding:10px 4px; margin-bottom:-2px; font-family:'Lora', serif; font-size:1.05rem; font-weight:600; color:var(--ink-soft); cursor:pointer; border-bottom:2px solid transparent;}
+  .subject-tab + .subject-tab{margin-left:22px;}
+  .subject-tab.active{color:var(--pine); border-bottom-color:var(--ochre);}
+  .subject-tab .count{font-family:'Public Sans', sans-serif; font-size:0.75rem; color:var(--ink-soft); font-weight:600;}
+
+  .category-tabs{display:none; gap:8px; margin-bottom:24px; flex-wrap:wrap;}
+  .category-tab{background:#fff; border:1.5px solid var(--line); padding:7px 14px; border-radius:20px; font-size:0.8rem; font-weight:600; color:var(--ink-soft); cursor:pointer;}
+  .category-tab.active{background:var(--pine); color:#fff; border-color:var(--pine);}
+  .category-tab .count{font-weight:500; opacity:0.85;}
+
+  .catalog{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:18px;}
+  .specimen{background:var(--bg-card); border:1.5px solid var(--line); border-radius:var(--radius); padding:20px 18px; display:flex; flex-direction:column; gap:10px; transition:transform .15s ease, border-color .15s ease;}
+  .specimen.unlocked:hover{transform:translateY(-3px); border-color:var(--leaf); cursor:pointer;}
+  .specimen.done{border-color:var(--leaf);}
+  .specimen.empty{cursor:default; opacity:0.7;}
+  .accession{font-family:'Lora', serif; font-size:0.78rem; color:var(--ink-soft); letter-spacing:0.06em;}
+  .specimen h3{font-family:'Lora', serif; font-size:1.28rem; font-weight:600; color:var(--pine); line-height:1.25;}
+  .specimen p.desc{font-size:0.86rem; color:var(--ink-soft); flex-grow:1;}
+  .status-row{display:flex; justify-content:space-between; align-items:center; margin-top:6px; font-size:0.78rem;}
+  .badge{padding:3px 9px; border-radius:20px; font-weight:600; font-size:0.72rem; letter-spacing:0.02em;}
+  .badge.ready{background:#E4EEDD; color:var(--leaf);}
+  .badge.passed{background:var(--pine); color:#fff;}
+  .badge.retry{background:#F4E0D8; color:var(--rust);}
+  .badge.empty{background:#EEE6D2; color:var(--ochre);}
+  .best-score{color:var(--ink-soft);}
+  .telegram-link{font-size:0.78rem; color:var(--ochre); text-decoration:none; border-bottom:1px dashed var(--ochre); align-self:flex-start;}
+
+  /* STUDENT GATE */
+  #gateView{display:none; max-width:420px; margin:60px auto;}
+  .gate-card{background:var(--bg-card); border:1.5px solid var(--line); border-radius:var(--radius); padding:34px;}
+  .gate-card h2{font-family:'Lora', serif; color:var(--pine); font-size:1.4rem; margin-bottom:8px;}
+  .gate-card p{font-size:0.88rem; color:var(--ink-soft); margin-bottom:22px;}
+
+  /* QUIZ VIEW */
+  #quizView{display:none;}
+  .quiz-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px;}
+  .back-link{font-size:0.85rem; color:var(--ink-soft); text-decoration:none; display:inline-flex; align-items:center; gap:6px;}
+  .back-link:hover{color:var(--pine);}
+  .nav-strip{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:24px; max-width:680px;}
+  .nav-tile{width:30px; height:30px; border-radius:4px; border:1.5px solid var(--line); background:#fff; color:var(--ink-soft); font-size:0.72rem; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer;}
+  .nav-tile.answered{background:var(--leaf); border-color:var(--leaf); color:#fff;}
+  .nav-tile.current{outline:2px solid var(--ochre); outline-offset:1px;}
+
+  .question-card{background:var(--bg-card); border:1.5px solid var(--line); border-radius:var(--radius); padding:28px; max-width:680px;}
+  .q-number{font-family:'Lora', serif; color:var(--ochre); font-size:0.85rem; margin-bottom:10px; font-weight:700;}
+  .q-image{width:100%; max-height:280px; object-fit:contain; border-radius:var(--radius); border:1.5px solid var(--line); margin-bottom:18px; background:#fff;}
+  .q-text{font-size:1.18rem; color:var(--pine); margin-bottom:22px; line-height:1.4;}
+  .options{display:flex; flex-direction:column; gap:10px;}
+  .option{text-align:left; padding:13px 16px; border:1.5px solid var(--line); border-radius:var(--radius); background:#fff; font-family:'Public Sans', sans-serif; font-size:0.96rem; color:var(--ink); cursor:pointer; transition:all .12s ease;}
+  .option:hover{border-color:var(--leaf);}
+  .option.selected{border-color:var(--pine); background:#E4EEDD;}
+  .quiz-nav{display:flex; justify-content:space-between; margin-top:24px; max-width:680px;}
+  button.primary{background:var(--pine); color:#fff; border:none; padding:12px 26px; border-radius:var(--radius); font-family:'Public Sans', sans-serif; font-weight:600; font-size:0.92rem; cursor:pointer;}
+  button.primary:disabled{background:var(--line); cursor:not-allowed;}
+  button.primary:hover:not(:disabled){background:#152B20;}
+
+  #resultView{display:none;}
+  .result-card{background:var(--bg-card); border:1.5px solid var(--line); border-radius:var(--radius); padding:40px; max-width:520px; text-align:center;}
+  .result-score{font-family:'Lora', serif; font-size:3.4rem; font-weight:700; color:var(--pine); margin-bottom:6px;}
+  .result-points{font-size:0.9rem; color:var(--ink-soft); margin-bottom:14px;}
+  .result-verdict{font-size:1rem; font-weight:700; letter-spacing:0.03em; margin-bottom:6px;}
+  .result-verdict.pass{color:var(--leaf);}
+  .result-verdict.fail{color:var(--rust);}
+  .result-desc{color:var(--ink-soft); font-size:0.9rem; margin-bottom:28px;}
+  .result-actions{display:flex; gap:12px; justify-content:center;}
+  button.secondary{background:transparent; border:1.5px solid var(--pine); color:var(--pine); padding:11px 22px; border-radius:var(--radius); font-family:'Public Sans', sans-serif; font-weight:600; cursor:pointer;}
+
+  .modal-overlay{display:none; position:fixed; inset:0; background:rgba(21,39,29,0.55); z-index:50; align-items:center; justify-content:center; padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:var(--bg-card); border-radius:var(--radius); padding:32px; width:100%; max-width:380px;}
+  .modal-box h2{font-family:'Lora', serif; color:var(--pine); margin-bottom:18px; font-size:1.3rem;}
+  .field-label{font-size:0.78rem; color:var(--ink-soft); font-weight:600; margin-bottom:5px; display:block;}
+  .field-input, .field-textarea, .field-select{width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:var(--radius); font-family:'Public Sans', sans-serif; font-size:0.92rem; margin-bottom:14px; background:#fff; color:var(--ink);}
+  .modal-actions{display:flex; gap:10px; margin-top:6px;}
+  .modal-error{color:var(--rust); font-size:0.82rem; margin-bottom:10px; display:none;}
+  .modal-close{background:none; border:none; color:var(--ink-soft); font-size:0.82rem; cursor:pointer; margin-top:14px; text-decoration:underline;}
+
+  #adminView{display:none;}
+  .admin-subtabs{display:flex; gap:10px; margin-bottom:22px;}
+  .admin-subtab{background:none; border:1.5px solid var(--line); padding:8px 16px; border-radius:20px; font-size:0.82rem; font-weight:600; color:var(--ink-soft); cursor:pointer;}
+  .admin-subtab.active{background:var(--pine); color:#fff; border-color:var(--pine);}
+  .admin-block{background:var(--bg-card); border:1.5px solid var(--line); border-radius:var(--radius); padding:24px; margin-bottom:24px; max-width:760px;}
+  .admin-block h3{font-family:'Lora', serif; color:var(--pine); margin-bottom:16px; font-size:1.15rem;}
+  .admin-topic-row{border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px; margin-bottom:10px;}
+  .admin-topic-row-head{display:flex; justify-content:space-between; align-items:center; cursor:pointer; flex-wrap:wrap; gap:8px;}
+  .admin-topic-row-head strong{color:var(--pine); font-family:'Lora', serif;}
+  .admin-topic-meta{font-size:0.76rem; color:var(--ink-soft);}
+  .admin-qform{display:none; margin-top:14px; border-top:1px dashed var(--line); padding-top:14px;}
+  .admin-qform.open{display:block;}
+  .option-row{display:flex; align-items:center; gap:8px; margin-bottom:8px;}
+  .option-row input[type=radio]{accent-color:var(--leaf);}
+  .option-row .field-input{margin-bottom:0; flex-grow:1;}
+  .existing-q{font-size:0.82rem; padding:8px 10px; background:#fff; border:1px solid var(--line); border-radius:var(--radius); margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .existing-q button{background:none; border:none; color:var(--rust); cursor:pointer; font-size:0.75rem; font-weight:600;}
+  .danger-btn{background:none; border:1.5px solid var(--rust); color:var(--rust); padding:5px 12px; border-radius:var(--radius); font-size:0.76rem; cursor:pointer; font-weight:600;}
+  .small-btn{background:none; border:1.5px solid var(--leaf); color:var(--leaf); padding:5px 12px; border-radius:var(--radius); font-size:0.76rem; cursor:pointer; font-weight:600;}
+  .image-drop{border:1.5px dashed var(--line); border-radius:var(--radius); padding:16px; text-align:center; font-size:0.82rem; color:var(--ink-soft); cursor:text; margin-bottom:8px; background:#fff;}
+  .image-drop:focus{outline:none; border-color:var(--leaf);}
+  .image-drop img{max-width:100%; max-height:140px; border-radius:4px; margin-top:8px; display:block; margin-left:auto; margin-right:auto;}
+  .points-input{width:90px;}
+
+  table.results-table{width:100%; border-collapse:collapse; font-size:0.82rem;}
+  table.results-table th, table.results-table td{padding:8px 10px; border-bottom:1px solid var(--line); text-align:left;}
+  table.results-table th{color:var(--ink-soft); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em;}
+
+  footer{
+    border-top:2px solid var(--pine);
+    padding:24px 6vw;
+    text-align:center;
+    font-size:0.8rem;
+    color:var(--ink-soft);
+  }
+  footer strong{color:var(--pine); font-family:'Lora', serif;}
+
+  @media (max-width:640px){
+    header{padding:18px 5vw 14px;}
+    main{padding:28px 5vw 60px;}
+    h1.page-title{font-size:1.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand">
+      <span class="brand-mark">🌿 Olimpiada.Science.uz</span>
+      <span class="brand-tag">Biologiya · Tabiiy fanlar</span>
+    </div>
+    <div class="brand-credit"><strong>Bioprogress</strong> jamoasi tomonidan · Mualliflar: Asqarali Allayorov, Azizbek Hamidov</div>
+  </div>
+  <div class="header-right">
+    <div class="student-chip" id="studentChip" style="display:none;">
+      👤 <strong id="studentChipName"></strong>
+      <button id="changeStudentBtn">o'zgartirish</button>
+    </div>
+    <div class="progress-summary">
+      O'zlashtirilgan mavzular<br>
+      <strong id="progressCount">0 / 0</strong>
+    </div>
+    <button class="admin-toggle" id="adminToggleBtn">🔑 O'qituvchi kirishi</button>
+  </div>
+</header>
+
+<main>
+
+  <div id="gateView">
+    <div class="gate-card">
+      <h2>Xush kelibsiz!</h2>
+      <p>Testni boshlashdan oldin ism-familiyangiz va telefon raqamingizni kiriting — bu orqali o'qituvchi natijalaringizni ko'ra oladi.</p>
+      <label class="field-label">Ism Familiya</label>
+      <input class="field-input" id="gateName" placeholder="Masalan: Aliyev Vali">
+      <label class="field-label">Telefon raqam</label>
+      <input class="field-input" id="gatePhone" placeholder="+998 90 123 45 67">
+      <div class="modal-error" id="gateError"></div>
+      <button class="primary" id="gateSubmitBtn" style="width:100%;">Davom etish</button>
+    </div>
+  </div>
+
+  <div id="catalogView">
+    <div class="section-eyebrow">Mavzular katalogi</div>
+    <h1 class="page-title">Biologiya va Science fanlarida test topshiriqlari bazasi</h1>
+    <div class="subject-tabs" id="subjectTabs"></div>
+    <div class="category-tabs" id="categoryTabs"></div>
+    <div class="catalog" id="catalogGrid"></div>
+  </div>
+
+  <div id="quizView">
+    <div class="quiz-header">
+      <a href="#" class="back-link" id="backLink">← Mavzular ro'yxatiga qaytish</a>
+      <span id="quizTopicName" style="font-family:'Lora',serif; color:var(--pine); font-weight:600;"></span>
+    </div>
+    <div class="nav-strip" id="navStrip"></div>
+    <div class="question-card">
+      <div class="q-number" id="qNumber"></div>
+      <img class="q-image" id="qImage" style="display:none;" src="" alt="Savol rasmi">
+      <div class="q-text" id="qText"></div>
+      <div class="options" id="qOptions"></div>
+    </div>
+    <div class="quiz-nav">
+      <button class="secondary" id="prevBtn">← Oldingi</button>
+      <button class="primary" id="nextBtn" disabled>Keyingi savol</button>
+    </div>
+  </div>
+
+  <div id="resultView">
+    <div class="result-card">
+      <div class="result-score" id="resultScore">0%</div>
+      <div class="result-points" id="resultPoints"></div>
+      <div class="result-verdict" id="resultVerdict"></div>
+      <div class="result-desc" id="resultDesc"></div>
+      <div class="result-actions">
+        <button class="secondary" id="retryBtn">Qayta urinish</button>
+        <button class="primary" id="continueBtn">Mavzularga qaytish</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="adminView">
+    <div class="section-eyebrow">O'qituvchi paneli</div>
+    <h1 class="page-title">Mavzu, savol va natijalarni shu yerdan boshqaring.</h1>
+
+    <div class="admin-subtabs">
+      <button class="admin-subtab active" id="tabTopicsBtn">📚 Mavzular</button>
+      <button class="admin-subtab" id="tabResultsBtn">📊 Natijalar</button>
+    </div>
+
+    <div id="adminTopicsSection">
+      <div class="admin-block" id="seedBlock" style="display:none;">
+        <h3>Boshlang'ich mavzular</h3>
+        <p style="font-size:0.85rem; color:var(--ink-soft); margin-bottom:14px;">Baza bo'sh ko'rinadi. Xohlasangiz, 20 ta tayyor Science mavzu nomini (savolsiz) bir tugma bilan yuklashingiz mumkin.</p>
+        <button class="small-btn" id="seedBtn">🌱 20 ta Science mavzusini yuklash</button>
+      </div>
+
+      <div class="admin-block">
+        <h3>Zaxira nusxa (Backup)</h3>
+        <p style="font-size:0.85rem; color:var(--ink-soft); margin-bottom:14px;">Barcha mavzu va savollarni bitta faylga yuklab saqlab qo'ying.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="small-btn" id="exportBtn">📥 Zaxira nusxa yuklab olish</button>
+          <label class="small-btn" style="cursor:pointer;">
+            📤 Zaxiradan tiklash
+            <input type="file" id="importFile" accept=".json" style="display:none;">
+          </label>
+        </div>
+        <div class="modal-error" id="importError"></div>
+        <div id="importStatus" style="font-size:0.8rem; color:var(--leaf); margin-top:8px; display:none;"></div>
+      </div>
+
+      <div class="admin-block">
+        <h3>Yangi mavzu qo'shish</h3>
+        <label class="field-label">Fan</label>
+        <select class="field-select" id="newTopicSubject">
+          <option value="biology">Biologiya</option>
+          <option value="science">Tabiiy fanlar (Science)</option>
+        </select>
+        <div id="newTopicCategoryWrap">
+          <label class="field-label">Bo'lim</label>
+          <select class="field-select" id="newTopicCategory">
+            <option value="bmb">BMB namunaviy testlari</option>
+            <option value="repetition">Repetitsion testlar</option>
+            <option value="thematic">Mavzulashtirilgan testlar</option>
+          </select>
+        </div>
+        <label class="field-label">Mavzu nomi</label>
+        <input class="field-input" id="newTopicTitle" placeholder="Masalan: Hujayra tuzilishi">
+        <label class="field-label">Qisqa tavsif</label>
+        <input class="field-input" id="newTopicDesc" placeholder="1 qatorlik izoh">
+        <label class="field-label">Telegram post havolasi</label>
+        <input class="field-input" id="newTopicTelegram" placeholder="https://t.me/...">
+        <div class="modal-error" id="newTopicError"></div>
+        <button class="primary" id="addTopicBtn">+ Mavzu qo'shish</button>
+      </div>
+
+      <div class="admin-block">
+        <h3>Ko'p savolni birdan yuklash</h3>
+        <p style="font-size:0.85rem; color:var(--ink-soft); margin-bottom:14px;">Tayyor .json fayl (Claude tomonidan tayyorlangan) orqali bitta mavzuga o'nlab savolni bir zumda qo'shing.</p>
+        <label class="field-label">Qaysi mavzuga qo'shamiz?</label>
+        <select class="field-select" id="bulkTopicSelect"></select>
+        <label class="field-label">Savollar fayli (.json)</label>
+        <input type="file" class="field-input" id="bulkQuestionsFile" accept=".json">
+        <div class="modal-error" id="bulkError"></div>
+        <div id="bulkStatus" style="font-size:0.8rem; color:var(--leaf); margin-top:4px; display:none;"></div>
+        <button class="primary" id="bulkAddBtn" style="margin-top:10px;">+ Barcha savollarni qo'shish</button>
+      </div>
+
+      <div class="admin-block">
+        <h3>Mavjud mavzular</h3>
+        <div id="adminTopicList"></div>
+      </div>
+    </div>
+
+    <div id="adminResultsSection" style="display:none;">
+      <div class="admin-block" style="max-width:100%;">
+        <h3>O'quvchilar natijalari</h3>
+        <button class="small-btn" id="exportResultsBtn" style="margin-bottom:16px;">📥 Natijalarni CSV (Excel) formatida yuklab olish</button>
+        <div style="overflow-x:auto;">
+          <table class="results-table" id="resultsTable">
+            <thead><tr><th>Ism Familiya</th><th>Telefon</th><th>Fan</th><th>Mavzu</th><th>Ball</th><th>Foiz</th><th>Holat</th><th>Sana</th></tr></thead>
+            <tbody id="resultsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <strong>Bioprogress</strong> — Olimpiada.Science.uz © 2026<br>
+  Mualliflar: Asqarali Allayorov, Azizbek Hamidov
+</footer>
+
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-box">
+    <h2>O'qituvchi kirishi</h2>
+    <div class="modal-error" id="loginError"></div>
+    <label class="field-label">Email</label>
+    <input class="field-input" id="loginEmail" type="email" placeholder="email@misol.com">
+    <label class="field-label">Parol</label>
+    <input class="field-input" id="loginPassword" type="password" placeholder="••••••••">
+    <div class="modal-actions">
+      <button class="primary" id="loginSubmitBtn" style="flex:1;">Kirish</button>
+    </div>
+    <button class="modal-close" id="loginCloseBtn">Bekor qilish</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyD3LDKEgsWysMGocyMggUrlLHwvDlUsS2s",
+  authDomain: "olimpiada-science.firebaseapp.com",
+  projectId: "olimpiada-science",
+  storageBucket: "olimpiada-science.firebasestorage.app",
+  messagingSenderId: "273641090807",
+  appId: "1:273641090807:web:9d5ad577e01b3a1c19edf2"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+</script>
+
+<script>
+/* ============================================================
+   1) SOZLAMALAR
+   ============================================================ */
+const SUBJECTS = [
+  { id: "biology", label: "Biologiya" },
+  { id: "science", label: "Tabiiy fanlar (Science)" }
+];
+const CATEGORIES = {
+  biology: [
+    { id: "bmb", label: "BMB namunaviy testlari" },
+    { id: "repetition", label: "Repetitsion testlar" },
+    { id: "thematic", label: "Mavzulashtirilgan testlar" }
+  ]
+};
+const PASS_THRESHOLD = 80;
+
+const SEED_SCIENCE_TOPICS = [
+  ["Gulli o'simliklar", "Gulli o'simliklarning tuzilishi va ko'payishi."],
+  ["Moslanishlar", "Organizmlarning tashqi muhitga moslashuv xususiyatlari."],
+  ["Moddalarning agregat holatlari", "Qattiq, suyuq va gazsimon holatlar hamda ular orasidagi o'tish."],
+  ["Moddalarning o'zaro ta'siri", "Moddalar orasidagi kimyoviy va fizik ta'sirlar."],
+  ["Kuchlar", "Nyuton qonunlari va kundalik hayotdagi kuchlar."],
+  ["Tovushlar", "Tovush to'lqinlari, chastota va tovush xususiyatlari."],
+  ["Magnitlar va magnit kuchi", "Magnitlanish hodisasi va magnit maydon xossalari."],
+  ["Atmosfera, suvning tabiatda aylanishi", "Yer atmosferasi tuzilishi va suv aylanish jarayoni."],
+  ["Atrof muhitning ifloslanishi", "Ifloslanish turlari va ularning tabiatga ta'siri."],
+  ["Yer sayyorasining harakati", "Yerning o'z o'qi va Quyosh atrofida aylanishi."],
+  ["Ovqat hazm qilish sistemasi", "Ovqat hazm qilish a'zolari va ularning vazifalari."],
+  ["Nafas va qon aylanish sistemasi", "Nafas olish va yurak-qon tomir sistemasi ishlashi."],
+  ["Kasalliklar", "Kasalliklarning turlari, sabablari va oldini olish."],
+  ["Ozuqa zanjiri va ozuqa to'ri", "Ekosistemadagi energiya va ozuqa oqimi."],
+  ["Fizik va kimyoviy o'zgarishlar", "Moddalarda sodir bo'ladigan o'zgarish turlari."],
+  ["Yorug'likning tarqalishi", "Yorug'lik nurlari, sinish va qaytish hodisalari."],
+  ["Elektr zanjirlar", "Elektr toki, zanjir elementlari va ularning ulanishi."],
+  ["Tog' jinslari", "Tog' jinslarining turlari va hosil bo'lishi."],
+  ["Tuproq va uning xossalari", "Tuproq tarkibi, turlari va unumdorligi."],
+  ["Quyosh sistemasi", "Quyosh sistemasidagi sayyoralar va ularning xususiyatlari."]
+];
+
+/* ============================================================
+   2) O'QUVCHI SHAXSI (ism, telefon) — localStorage'da saqlanadi
+   ============================================================ */
+const STUDENT_KEY = "olimpiada_student_v1";
+function loadStudent(){ try{ return JSON.parse(localStorage.getItem(STUDENT_KEY)); }catch(e){ return null; } }
+function saveStudent(s){ localStorage.setItem(STUDENT_KEY, JSON.stringify(s)); }
+let student = loadStudent();
+
+const gateView = document.getElementById('gateView');
+const catalogView = document.getElementById('catalogView');
+const quizView = document.getElementById('quizView');
+const resultView = document.getElementById('resultView');
+const adminView = document.getElementById('adminView');
+
+function showGateIfNeeded(){
+  if(isAdmin) return false;
+  if(!student){
+    gateView.style.display = 'block';
+    catalogView.style.display = 'none';
+    document.getElementById('studentChip').style.display = 'none';
+    return true;
+  }
+  document.getElementById('studentChip').style.display = 'flex';
+  document.getElementById('studentChipName').textContent = student.name;
+  return false;
+}
+
+document.getElementById('gateSubmitBtn').addEventListener('click', () => {
+  const name = document.getElementById('gateName').value.trim();
+  const phone = document.getElementById('gatePhone').value.trim();
+  const errEl = document.getElementById('gateError');
+  if(!name || !phone){
+    errEl.textContent = "Ism-familiya va telefon raqamni kiriting.";
+    errEl.style.display = 'block';
+    return;
+  }
+  student = { name, phone };
+  saveStudent(student);
+  gateView.style.display = 'none';
+  catalogView.style.display = 'block';
+  document.getElementById('studentChip').style.display = 'flex';
+  document.getElementById('studentChipName').textContent = student.name;
+  renderCatalog();
+});
+
+document.getElementById('changeStudentBtn').addEventListener('click', () => {
+  localStorage.removeItem(STUDENT_KEY);
+  student = null;
+  catalogView.style.display = 'none';
+  showGateIfNeeded();
+});
+
+/* ============================================================
+   3) NATIJALARNI SAQLASH (har bir o'quvchining o'z brauzerida — belgi uchun)
+   ============================================================ */
+const STORAGE_KEY = "olimpiada_progress_v1";
+function loadProgress(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }catch(e){ return {}; } }
+function saveProgress(p){ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }
+let progress = loadProgress();
+
+/* ============================================================
+   4) FIREBASE'DAN MAVZULARNI JONLI O'QISH
+   ============================================================ */
+let TOPICS = [];
+let isAdmin = false;
+
+db.collection("topics").onSnapshot((snapshot) => {
+  TOPICS = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  TOPICS.sort((a, b) => (a.subject || '').localeCompare(b.subject || '') || (a.order || 0) - (b.order || 0));
+  renderCatalog();
+  if(isAdmin){ renderAdminTopicList(); renderBulkTopicSelect(); }
+  document.getElementById('seedBlock').style.display = (isAdmin && TOPICS.length === 0) ? 'block' : 'none';
+}, (err) => console.error("Firestore xato:", err));
+
+/* ============================================================
+   5) KATALOG
+   ============================================================ */
+const catalogGrid = document.getElementById('catalogGrid');
+let currentSubject = "science";
+let currentCategory = null;
+
+function effectiveCategory(t){ return t.category || 'thematic'; }
+function topicsOf(subjectId, categoryId){
+  return TOPICS.filter(t => t.subject === subjectId && (!categoryId || effectiveCategory(t) === categoryId));
+}
+
+function renderTabs(){
+  const tabsEl = document.getElementById('subjectTabs');
+  tabsEl.innerHTML = "";
+  SUBJECTS.forEach(s => {
+    const subjectTopics = topicsOf(s.id);
+    const done = subjectTopics.filter(t => progress[t.id] && progress[t.id].passed).length;
+    const btn = document.createElement('button');
+    btn.className = 'subject-tab' + (s.id === currentSubject ? ' active' : '');
+    btn.innerHTML = `${s.label} <span class="count">(${done}/${subjectTopics.length})</span>`;
+    btn.addEventListener('click', () => { currentSubject = s.id; currentCategory = null; renderCatalog(); });
+    tabsEl.appendChild(btn);
+  });
+  renderCategoryTabs();
+}
+
+function renderCategoryTabs(){
+  const catWrap = document.getElementById('categoryTabs');
+  const cats = CATEGORIES[currentSubject];
+  if(!cats){ catWrap.style.display = 'none'; catWrap.innerHTML = ''; return; }
+  if(!currentCategory || !cats.find(c => c.id === currentCategory)) currentCategory = cats[0].id;
+  catWrap.style.display = 'flex';
+  catWrap.innerHTML = cats.map(c => {
+    const topics = topicsOf(currentSubject, c.id);
+    const done = topics.filter(t => progress[t.id] && progress[t.id].passed).length;
+    return `<button class="category-tab${c.id === currentCategory ? ' active' : ''}" data-cat="${c.id}">${c.label} <span class="count">(${done}/${topics.length})</span></button>`;
+  }).join('');
+  catWrap.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { currentCategory = b.dataset.cat; renderCatalog(); }));
+}
+
+function renderCatalog(){
+  if(showGateIfNeeded()) return;
+  if(isAdmin) return;
+  if(catalogView.style.display === 'none') catalogView.style.display = 'block';
+  renderTabs();
+  catalogGrid.innerHTML = "";
+  const cats = CATEGORIES[currentSubject];
+  const visible = cats ? topicsOf(currentSubject, currentCategory) : topicsOf(currentSubject);
+
+  if(visible.length === 0){
+    catalogGrid.innerHTML = `<div style="grid-column:1/-1; padding:40px 20px; text-align:center; color:var(--ink-soft); border:1.5px dashed var(--line); border-radius:4px;">
+      🌱 Bu bo'lim uchun mavzular tez orada qo'shiladi.
+    </div>`;
+    document.getElementById('progressCount').textContent = `${TOPICS.filter(t => progress[t.id] && progress[t.id].passed).length} / ${TOPICS.length}`;
+    return;
+  }
+
+  visible.forEach((t) => {
+    const hasQuestions = t.questions && t.questions.length > 0;
+    const rec = progress[t.id];
+
+    const card = document.createElement('div');
+    let cls = 'specimen unlocked' + (rec && rec.passed ? ' done' : '');
+    if(!hasQuestions) cls += ' empty';
+    card.className = cls;
+
+    let badgeHtml;
+    if(!hasQuestions){
+      badgeHtml = `<span class="badge empty">✎ Tayyorlanmoqda</span>`;
+    } else if(rec && rec.passed){
+      badgeHtml = `<span class="badge passed">✓ O'zlashtirildi</span><span class="best-score">${rec.bestScore}%</span>`;
+    } else if(rec && !rec.passed){
+      badgeHtml = `<span class="badge retry">Qayta urinish</span><span class="best-score">eng yaxshi: ${rec.bestScore}%</span>`;
+    } else {
+      badgeHtml = `<span class="badge ready">Boshlashga tayyor</span>`;
+    }
+
+    card.innerHTML = `
+      <div class="accession">Mavzu №${String(t.order).padStart(2,'0')}</div>
+      <h3>${t.title}</h3>
+      <p class="desc">${t.desc || ''}</p>
+      ${t.telegram ? `<a class="telegram-link" href="${t.telegram}" target="_blank" onclick="event.stopPropagation()">📎 Telegramda o'rganish</a>` : ''}
+      <div class="status-row">${badgeHtml}</div>
+    `;
+
+    if(hasQuestions){
+      card.addEventListener('click', () => startQuiz(t.id));
+    }
+    catalogGrid.appendChild(card);
+  });
+
+  const doneCount = TOPICS.filter(t => progress[t.id] && progress[t.id].passed).length;
+  document.getElementById('progressCount').textContent = `${doneCount} / ${TOPICS.length}`;
+}
+
+/* ============================================================
+   6) TEST (QUIZ) MANTIG'I
+   ============================================================ */
+let currentTopicId = null;
+let currentQuestionIndex = 0;
+let studentAnswers = [];
+
+function pointsOf(q){ return (typeof q.points === 'number' && q.points > 0) ? q.points : 1; }
+
+function startQuiz(topicId){
+  currentTopicId = topicId;
+  currentQuestionIndex = 0;
+  const topic = TOPICS.find(t => t.id === topicId);
+  studentAnswers = new Array(topic.questions.length).fill(null);
+  catalogView.style.display = 'none';
+  resultView.style.display = 'none';
+  adminView.style.display = 'none';
+  quizView.style.display = 'block';
+  document.getElementById('quizTopicName').textContent = topic.title;
+  renderNavStrip();
+  renderQuestion();
+}
+
+function renderNavStrip(){
+  const topic = TOPICS.find(t => t.id === currentTopicId);
+  const strip = document.getElementById('navStrip');
+  strip.innerHTML = "";
+  topic.questions.forEach((q, i) => {
+    const tile = document.createElement('div');
+    tile.className = 'nav-tile' + (studentAnswers[i] !== null ? ' answered' : '') + (i === currentQuestionIndex ? ' current' : '');
+    tile.textContent = i + 1;
+    tile.addEventListener('click', () => { currentQuestionIndex = i; renderQuestion(); });
+    strip.appendChild(tile);
+  });
+}
+
+function renderQuestion(){
+  const topic = TOPICS.find(t => t.id === currentTopicId);
+  const q = topic.questions[currentQuestionIndex];
+
+  document.getElementById('qNumber').textContent = `Savol ${currentQuestionIndex+1} / ${topic.questions.length}`;
+  const qImageEl = document.getElementById('qImage');
+  if(q.image){ qImageEl.src = q.image; qImageEl.style.display = 'block'; }
+  else { qImageEl.style.display = 'none'; qImageEl.src = ''; }
+  document.getElementById('qText').textContent = q.q;
+
+  const optsContainer = document.getElementById('qOptions');
+  optsContainer.innerHTML = "";
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option' + (studentAnswers[currentQuestionIndex] === i ? ' selected' : '');
+    btn.textContent = opt;
+    btn.addEventListener('click', () => {
+      studentAnswers[currentQuestionIndex] = i;
+      renderNavStrip();
+      renderQuestion();
+    });
+    optsContainer.appendChild(btn);
+  });
+
+  renderNavStrip();
+
+  const prevBtn = document.getElementById('prevBtn');
+  prevBtn.disabled = currentQuestionIndex === 0;
+  prevBtn.onclick = () => { currentQuestionIndex--; renderQuestion(); };
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.disabled = false;
+  nextBtn.textContent = (currentQuestionIndex === topic.questions.length - 1) ? "Testni yakunlash" : "Keyingi savol";
+  nextBtn.onclick = () => {
+    if(currentQuestionIndex < topic.questions.length - 1){
+      currentQuestionIndex++;
+      renderQuestion();
+    } else {
+      finishQuiz();
+    }
+  };
+}
+
+async function finishQuiz(){
+  const topic = TOPICS.find(t => t.id === currentTopicId);
+  let pointsEarned = 0, pointsTotal = 0, correctCount = 0;
+  topic.questions.forEach((q, i) => {
+    const pts = pointsOf(q);
+    pointsTotal += pts;
+    if(studentAnswers[i] === q.correct){ pointsEarned += pts; correctCount++; }
+  });
+  const scorePct = Math.round((pointsEarned / pointsTotal) * 100);
+  const passed = scorePct >= PASS_THRESHOLD;
+
+  const prevBest = (progress[topic.id] && progress[topic.id].bestScore) || 0;
+  progress[topic.id] = { bestScore: Math.max(prevBest, scorePct), passed: passed || (progress[topic.id] && progress[topic.id].passed) || false };
+  saveProgress(progress);
+
+  try{
+    await db.collection("results").add({
+      studentName: student ? student.name : "Noma'lum",
+      studentPhone: student ? student.phone : "",
+      topicId: topic.id, topicTitle: topic.title, subject: topic.subject,
+      scorePercent: scorePct, pointsEarned, pointsTotal, passed,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch(e){ console.error("Natijani saqlashda xato:", e); }
+
+  quizView.style.display = 'none';
+  resultView.style.display = 'block';
+  document.getElementById('resultScore').textContent = `${scorePct}%`;
+  document.getElementById('resultPoints').textContent = `${pointsEarned.toFixed(1)} / ${pointsTotal.toFixed(1)} ball · ${correctCount}/${topic.questions.length} to'g'ri`;
+  const verdictEl = document.getElementById('resultVerdict');
+  const descEl = document.getElementById('resultDesc');
+  if(passed){
+    verdictEl.textContent = "O'tdingiz! 🎉";
+    verdictEl.className = "result-verdict pass";
+    descEl.textContent = `Siz ${PASS_THRESHOLD}% bo'sag'asidan o'tdingiz.`;
+  } else {
+    verdictEl.textContent = "Hali yetarli emas";
+    verdictEl.className = "result-verdict fail";
+    descEl.textContent = `${PASS_THRESHOLD}% dan o'tish uchun mavzuni qayta o'rganib, testni qayta ishlang.`;
+  }
+  document.getElementById('retryBtn').onclick = () => startQuiz(currentTopicId);
+  document.getElementById('continueBtn').onclick = () => { resultView.style.display = 'none'; catalogView.style.display = 'block'; renderCatalog(); };
+}
+
+document.getElementById('backLink').addEventListener('click', (e) => {
+  e.preventDefault();
+  quizView.style.display = 'none';
+  catalogView.style.display = 'block';
+  renderCatalog();
+});
+
+/* ============================================================
+   7) O'QITUVCHI KIRISHI
+   ============================================================ */
+const loginModal = document.getElementById('loginModal');
+const adminToggleBtn = document.getElementById('adminToggleBtn');
+
+adminToggleBtn.addEventListener('click', () => {
+  if(isAdmin) auth.signOut();
+  else loginModal.classList.add('open');
+});
+document.getElementById('loginCloseBtn').addEventListener('click', () => loginModal.classList.remove('open'));
+document.getElementById('loginSubmitBtn').addEventListener('click', () => {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+  auth.signInWithEmailAndPassword(email, pass).catch(() => {
+    errEl.textContent = "Email yoki parol noto'g'ri.";
+    errEl.style.display = 'block';
+  });
+});
+
+auth.onAuthStateChanged((user) => {
+  isAdmin = !!user;
+  adminToggleBtn.textContent = isAdmin ? "🔓 Admin panel" : "🔑 O'qituvchi kirishi";
+  adminToggleBtn.classList.toggle('logged-in', isAdmin);
+  loginModal.classList.remove('open');
+  document.getElementById('studentChip').style.display = 'none';
+  document.getElementById('progressCount').parentElement.style.display = isAdmin ? 'none' : 'block';
+
+  if(isAdmin){
+    gateView.style.display = 'none';
+    catalogView.style.display = 'none';
+    quizView.style.display = 'none';
+    resultView.style.display = 'none';
+    adminView.style.display = 'block';
+    renderAdminTopicList();
+    renderBulkTopicSelect();
+    document.getElementById('seedBlock').style.display = (TOPICS.length === 0) ? 'block' : 'none';
+  } else {
+    adminView.style.display = 'none';
+    renderCatalog();
+  }
+});
+
+document.getElementById('tabTopicsBtn').addEventListener('click', () => {
+  document.getElementById('tabTopicsBtn').classList.add('active');
+  document.getElementById('tabResultsBtn').classList.remove('active');
+  document.getElementById('adminTopicsSection').style.display = 'block';
+  document.getElementById('adminResultsSection').style.display = 'none';
+});
+document.getElementById('tabResultsBtn').addEventListener('click', () => {
+  document.getElementById('tabResultsBtn').classList.add('active');
+  document.getElementById('tabTopicsBtn').classList.remove('active');
+  document.getElementById('adminTopicsSection').style.display = 'none';
+  document.getElementById('adminResultsSection').style.display = 'block';
+  loadResults();
+});
+
+/* ============================================================
+   8) NATIJALAR (RESULTS) — o'qituvchi uchun
+   ============================================================ */
+let allResults = [];
+function loadResults(){
+  db.collection("results").orderBy("timestamp", "desc").get().then((snapshot) => {
+    allResults = snapshot.docs.map(d => d.data());
+    renderResultsTable();
+  }).catch((err) => console.error("Natijalarni o'qishda xato:", err));
+}
+
+function renderResultsTable(){
+  const tbody = document.getElementById('resultsTableBody');
+  tbody.innerHTML = allResults.map(r => {
+    const date = r.timestamp && r.timestamp.toDate ? r.timestamp.toDate().toLocaleString('uz-UZ') : '';
+    const subjectLabel = (SUBJECTS.find(s => s.id === r.subject) || {}).label || r.subject;
+    return `<tr>
+      <td>${r.studentName || ''}</td>
+      <td>${r.studentPhone || ''}</td>
+      <td>${subjectLabel}</td>
+      <td>${r.topicTitle || ''}</td>
+      <td>${(r.pointsEarned||0).toFixed(1)} / ${(r.pointsTotal||0).toFixed(1)}</td>
+      <td>${r.scorePercent}%</td>
+      <td>${r.passed ? "✓ O'tdi" : "✗ O'tmadi"}</td>
+      <td>${date}</td>
+    </tr>`;
+  }).join('');
+}
+
+document.getElementById('exportResultsBtn').addEventListener('click', () => {
+  const header = ["Ism Familiya","Telefon","Fan","Mavzu","Ball olingan","Ball jami","Foiz","Holat","Sana"];
+  const rows = allResults.map(r => {
+    const date = r.timestamp && r.timestamp.toDate ? r.timestamp.toDate().toLocaleString('uz-UZ') : '';
+    const subjectLabel = (SUBJECTS.find(s => s.id === r.subject) || {}).label || r.subject;
+    return [r.studentName, r.studentPhone, subjectLabel, r.topicTitle, (r.pointsEarned||0).toFixed(1), (r.pointsTotal||0).toFixed(1), r.scorePercent+'%', r.passed ? "O'tdi" : "O'tmadi", date];
+  });
+  const csv = [header, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `natijalar-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* ============================================================
+   9) ADMIN — mavzu/savol qo'shish, rasm paste, ball
+   ============================================================ */
+let pendingImages = {};
+
+function compressImageFile(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const maxWidth = 800;
+        const scale = Math.min(1, maxWidth / img.width);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function wireImageWidget(topicId, rowEl){
+  const dropEl = document.getElementById(`imagedrop-${topicId}`);
+  const fileInput = document.getElementById(`imagefile-${topicId}`);
+  const previewImg = document.getElementById(`imagepreview-${topicId}`);
+  const textSpan = document.getElementById(`imagedrop-text-${topicId}`);
+  const removeBtn = document.getElementById(`removeimgbtn-${topicId}`);
+
+  async function handleFile(file){
+    if(!file || !file.type.startsWith('image/')) return;
+    textSpan.textContent = "Yuklanmoqda...";
+    const dataUrl = await compressImageFile(file);
+    pendingImages[topicId] = dataUrl;
+    previewImg.src = dataUrl;
+    previewImg.style.display = 'block';
+    textSpan.textContent = "✓ Rasm tayyor";
+    removeBtn.style.display = 'inline-block';
+  }
+
+  dropEl.addEventListener('paste', (e) => {
+    const items = e.clipboardData.items;
+    for(const item of items){
+      if(item.type.startsWith('image/')){ handleFile(item.getAsFile()); e.preventDefault(); return; }
+    }
+  });
+  dropEl.addEventListener('click', () => fileInput.click());
+  rowEl.querySelector('[data-action="pickimage"]').addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+  removeBtn.addEventListener('click', () => {
+    delete pendingImages[topicId];
+    previewImg.style.display = 'none'; previewImg.src = '';
+    textSpan.textContent = "📋 Rasmni shu yerga bosib, Ctrl+V bilan joylang — yoki pastdan fayl tanlang";
+    removeBtn.style.display = 'none';
+    fileInput.value = '';
+  });
+}
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const backupData = TOPICS.map(t => ({ subject: t.subject, order: t.order, title: t.title, desc: t.desc || '', telegram: t.telegram || '', questions: t.questions || [] }));
+  const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `olimpiada-zaxira-${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); URL.revokeObjectURL(url);
+});
+
+document.getElementById('importFile').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const errEl = document.getElementById('importError');
+  const statusEl = document.getElementById('importStatus');
+  errEl.style.display = 'none'; statusEl.style.display = 'none';
+  try{
+    const data = JSON.parse(await file.text());
+    if(!Array.isArray(data)) throw new Error("format");
+    if(!confirm(`Zaxiradan ${data.length} ta mavzuni tiklaymizmi? Bu hozirgi mavzularga QO'SHIMCHA yuklanadi.`)) return;
+    for(const t of data){
+      await db.collection("topics").add({ subject: t.subject, order: t.order, title: t.title, desc: t.desc||'', telegram: t.telegram||'', questions: t.questions||[] });
+    }
+    statusEl.textContent = `✓ ${data.length} ta mavzu tiklandi.`;
+    statusEl.style.display = 'block';
+  } catch(err){
+    errEl.textContent = "Fayl o'qishda xatolik.";
+    errEl.style.display = 'block';
+  }
+  e.target.value = '';
+});
+
+document.getElementById('seedBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('seedBtn');
+  btn.disabled = true; btn.textContent = "Yuklanmoqda...";
+  for(let i = 0; i < SEED_SCIENCE_TOPICS.length; i++){
+    const [title, desc] = SEED_SCIENCE_TOPICS[i];
+    await db.collection("topics").add({ subject: "science", order: i + 1, title, desc, telegram: "", questions: [] });
+  }
+  btn.textContent = "✓ Yuklandi";
+});
+
+document.getElementById('newTopicSubject').addEventListener('change', (e) => {
+  document.getElementById('newTopicCategoryWrap').style.display = (e.target.value === 'biology') ? 'block' : 'none';
+});
+document.getElementById('newTopicCategoryWrap').style.display = (document.getElementById('newTopicSubject').value === 'biology') ? 'block' : 'none';
+
+document.getElementById('addTopicBtn').addEventListener('click', async () => {
+  const subject = document.getElementById('newTopicSubject').value;
+  const category = document.getElementById('newTopicCategory').value;
+  const title = document.getElementById('newTopicTitle').value.trim();
+  const desc = document.getElementById('newTopicDesc').value.trim();
+  const telegram = document.getElementById('newTopicTelegram').value.trim();
+  const errEl = document.getElementById('newTopicError');
+  errEl.style.display = 'none';
+  if(!title){ errEl.textContent = "Mavzu nomini kiriting."; errEl.style.display = 'block'; return; }
+  const order = (subject === 'biology' ? topicsOf(subject, category) : topicsOf(subject)).length + 1;
+  const payload = { subject, order, title, desc, telegram, questions: [] };
+  if(subject === 'biology') payload.category = category;
+  await db.collection("topics").add(payload);
+  document.getElementById('newTopicTitle').value = '';
+  document.getElementById('newTopicDesc').value = '';
+  document.getElementById('newTopicTelegram').value = '';
+});
+
+function renderBulkTopicSelect(){
+  const sel = document.getElementById('bulkTopicSelect');
+  if(!sel) return;
+  const prevVal = sel.value;
+  sel.innerHTML = SUBJECTS.map(s => {
+    return topicsOf(s.id).map(t => {
+      const cats = CATEGORIES[s.id];
+      const catLabel = cats ? (cats.find(c => c.id === effectiveCategory(t)) || {}).label : null;
+      const label = catLabel ? `${s.label} — ${catLabel} — ${t.title}` : `${s.label} — ${t.title}`;
+      return `<option value="${t.id}">${label}</option>`;
+    }).join('');
+  }).join('');
+  if(prevVal) sel.value = prevVal;
+}
+
+document.getElementById('bulkAddBtn').addEventListener('click', async () => {
+  const topicId = document.getElementById('bulkTopicSelect').value;
+  const fileInput = document.getElementById('bulkQuestionsFile');
+  const errEl = document.getElementById('bulkError');
+  const statusEl = document.getElementById('bulkStatus');
+  errEl.style.display = 'none'; statusEl.style.display = 'none';
+
+  if(!topicId){ errEl.textContent = "Mavzuni tanlang."; errEl.style.display = 'block'; return; }
+  const file = fileInput.files[0];
+  if(!file){ errEl.textContent = "Fayl tanlang."; errEl.style.display = 'block'; return; }
+
+  try{
+    const data = JSON.parse(await file.text());
+    if(!Array.isArray(data)) throw new Error("format");
+    const topic = TOPICS.find(t => t.id === topicId);
+    const cleaned = data.map(q => ({
+      q: q.q, options: q.options, correct: q.correct,
+      points: (typeof q.points === 'number' && q.points > 0) ? q.points : 1,
+      ...(q.image ? { image: q.image } : {})
+    }));
+    const newQuestions = [...(topic.questions||[]), ...cleaned];
+    await db.collection("topics").doc(topicId).update({ questions: newQuestions });
+    statusEl.textContent = `✓ ${cleaned.length} ta savol "${topic.title}" mavzusiga qo'shildi.`;
+    statusEl.style.display = 'block';
+    fileInput.value = '';
+  } catch(err){
+    errEl.textContent = "Fayl formatida xatolik. To'g'ri .json fayl ekanini tekshiring.";
+    errEl.style.display = 'block';
+  }
+});
+
+function renderAdminTopicList(){
+  const listEl = document.getElementById('adminTopicList');
+  listEl.innerHTML = "";
+
+  SUBJECTS.forEach(s => {
+    const subjectTopics = topicsOf(s.id);
+    if(subjectTopics.length === 0) return;
+    const header = document.createElement('div');
+    header.style.cssText = "font-family:'Lora',serif; color:var(--pine); font-weight:600; margin:14px 0 8px;";
+    header.textContent = s.label;
+    listEl.appendChild(header);
+
+    const cats = CATEGORIES[s.id];
+    const groups = cats ? cats.map(c => ({ label: c.label, topics: topicsOf(s.id, c.id) })) : [{ label: null, topics: subjectTopics }];
+
+    groups.forEach(group => {
+      if(group.topics.length === 0) return;
+      if(group.label){
+        const subHeader = document.createElement('div');
+        subHeader.style.cssText = "font-size:0.76rem; color:var(--ochre); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin:10px 0 6px;";
+        subHeader.textContent = group.label;
+        listEl.appendChild(subHeader);
+      }
+
+    group.topics.forEach(t => {
+      const row = document.createElement('div');
+      row.className = 'admin-topic-row';
+      row.innerHTML = `
+        <div class="admin-topic-row-head">
+          <div>
+            <strong>${t.title}</strong>
+            <div class="admin-topic-meta">${(t.questions||[]).length} ta savol</div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="small-btn" data-action="toggle">+ Savol qo'shish</button>
+            <button class="danger-btn" data-action="delete">O'chirish</button>
+          </div>
+        </div>
+        <div class="admin-qform" id="qform-${t.id}">
+          <div id="existingQs-${t.id}"></div>
+          <label class="field-label">Savol matni</label>
+          <input class="field-input" id="qtext-${t.id}" placeholder="Savolni yozing">
+          <label class="field-label">Rasm (ixtiyoriy)</label>
+          <div class="image-drop" id="imagedrop-${t.id}" tabindex="0">
+            <span id="imagedrop-text-${t.id}">📋 Rasmni shu yerga bosib, Ctrl+V bilan joylang — yoki pastdan fayl tanlang</span>
+            <img id="imagepreview-${t.id}" style="display:none;">
+          </div>
+          <input type="file" accept="image/*" id="imagefile-${t.id}" style="display:none;">
+          <div style="display:flex; gap:8px; margin-bottom:14px;">
+            <button type="button" class="small-btn" data-action="pickimage">📎 Fayl tanlash</button>
+            <button type="button" class="danger-btn" data-action="removeimage" id="removeimgbtn-${t.id}" style="display:none;">Rasmni olib tashlash</button>
+          </div>
+          <label class="field-label">Variantlar (to'g'ri javobni belgilang)</label>
+          <div class="option-row"><input type="radio" name="correct-${t.id}" value="0" checked><input class="field-input" id="opt0-${t.id}" placeholder="A variant"></div>
+          <div class="option-row"><input type="radio" name="correct-${t.id}" value="1"><input class="field-input" id="opt1-${t.id}" placeholder="B variant"></div>
+          <div class="option-row"><input type="radio" name="correct-${t.id}" value="2"><input class="field-input" id="opt2-${t.id}" placeholder="C variant"></div>
+          <div class="option-row"><input type="radio" name="correct-${t.id}" value="3"><input class="field-input" id="opt3-${t.id}" placeholder="D variant"></div>
+          <label class="field-label">Ball (standart: 1)</label>
+          <input class="field-input points-input" type="number" step="0.1" min="0.1" id="qpoints-${t.id}" placeholder="1">
+          <div class="modal-error" id="qerror-${t.id}"></div>
+          <button class="primary" data-action="addq">+ Savolni saqlash</button>
+        </div>
+      `;
+      listEl.appendChild(row);
+      wireImageWidget(t.id, row);
+
+      row.querySelector('[data-action="toggle"]').addEventListener('click', () => {
+        row.querySelector(`#qform-${t.id}`).classList.toggle('open');
+        renderExistingQuestions(t);
+      });
+
+      row.querySelector('[data-action="delete"]').addEventListener('click', async () => {
+        if(confirm(`"${t.title}" mavzusini butunlay o'chirmoqchimisiz?`)) await db.collection("topics").doc(t.id).delete();
+      });
+
+      row.querySelector('[data-action="addq"]').addEventListener('click', async () => {
+        const qtext = document.getElementById(`qtext-${t.id}`).value.trim();
+        const opts = [0,1,2,3].map(i => document.getElementById(`opt${i}-${t.id}`).value.trim());
+        const correct = parseInt(row.querySelector(`input[name="correct-${t.id}"]:checked`).value, 10);
+        const pointsRaw = parseFloat(document.getElementById(`qpoints-${t.id}`).value);
+        const points = (!isNaN(pointsRaw) && pointsRaw > 0) ? pointsRaw : 1;
+        const errEl = document.getElementById(`qerror-${t.id}`);
+        errEl.style.display = 'none';
+        if(!qtext || opts.some(o => !o)){
+          errEl.textContent = "Savol va barcha 4 ta variantni to'ldiring.";
+          errEl.style.display = 'block';
+          return;
+        }
+        const newQuestion = { q: qtext, options: opts, correct, points };
+        if(pendingImages[t.id]) newQuestion.image = pendingImages[t.id];
+        const newQuestions = [...(t.questions||[]), newQuestion];
+        await db.collection("topics").doc(t.id).update({ questions: newQuestions });
+        document.getElementById(`qtext-${t.id}`).value = '';
+        document.getElementById(`qpoints-${t.id}`).value = '';
+        [0,1,2,3].forEach(i => document.getElementById(`opt${i}-${t.id}`).value = '');
+        document.getElementById(`removeimgbtn-${t.id}`).click();
+      });
+    });
+    });
+  });
+}
+
+function renderExistingQuestions(topic){
+  const container = document.getElementById(`existingQs-${topic.id}`);
+  if(!container) return;
+  const qs = topic.questions || [];
+  if(qs.length === 0){
+    container.innerHTML = `<p style="font-size:0.8rem; color:var(--ink-soft); margin-bottom:10px;">Hali savol yo'q.</p>`;
+    return;
+  }
+  container.innerHTML = qs.map((q, i) => `
+    <div class="existing-q">
+      <span>${i+1}. ${q.q} <em style="color:var(--ink-soft);">(${pointsOf(q)} ball)</em></span>
+      <button data-idx="${i}">O'chirish</button>
+    </div>
+  `).join('');
+  container.querySelectorAll('button[data-idx]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const idx = parseInt(btn.dataset.idx, 10);
+      const updated = topic.questions.filter((_, i) => i !== idx);
+      await db.collection("topics").doc(topic.id).update({ questions: updated });
+    });
+  });
+}
+
+/* Boshlash */
+showGateIfNeeded();
+</script>
+
+</body>
+</html>
